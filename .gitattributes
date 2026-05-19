@@ -1,0 +1,12 @@
+# Docker
+/**/Dockerfile eol=lf text
+
+# Git
+/**/.gitattributes eol=lf export-ignore text
+/**/.gitignore eol=lf export-ignore text
+
+# Markdown
+/**/*.md diff=markdown eol=lf text
+
+# YAML
+/**/*.yml eol=lf text

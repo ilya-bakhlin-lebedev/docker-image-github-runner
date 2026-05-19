@@ -1,0 +1,42 @@
+name: "Build"
+on: "push"
+run-name: "Build GitHub Runner"
+jobs:
+  build:
+    env:
+      GH_TOKEN: "${{ github.token }}"
+    name: "Build"
+    permissions:
+      contents: "read"
+      actions: "write"
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "GitHub Checkout"
+        uses: "actions/checkout@v6"
+      - name: "Cache"
+        uses: "actions/cache@v5"
+        with:
+          key: "${{ runner.os }}-${{ github.sha }}"
+          path: "${{ runner.temp }}/.cache"
+          restore-keys: "${{ runner.os }}"
+      - name: "Cache Delete All"
+        run: >
+          gh cache delete
+          --all
+          --repo ${{ github.repository }}
+          --succeed-on-no-caches
+      - name: "Docker Set Up Builder"
+        uses: "docker/setup-buildx-action@v4"
+      - name: "Docker Log In"
+        uses: "docker/login-action@v4"
+        with:
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+      - name: "Docker Build & Push"
+        uses: "docker/build-push-action@v7"
+        with:
+          cache-from: "type=local,src=${{ runner.temp }}/.cache"
+          cache-to: "type=local,dest=${{ runner.temp }}/.cache,mode=max"
+          platforms: "linux/amd64"
+          push: "true"
+          tags: "deudafix/github-runner:latest"
