@@ -35,7 +35,8 @@ RUN wget -P /tmp/ -q "https://github.com/cli/cli/releases/download/v${VERSION_GI
 FROM wget AS wget-github-actions-runner
 
 RUN wget -P /tmp/ -q "https://github.com/actions/runner/releases/download/v2.334.0/actions-runner-linux-x64-2.334.0.tar.gz" && \
-    tar -C /home/github/runner/ --exclude "./externals*" -f /tmp/actions-runner-linux-x64-2.334.0.tar.gz -o -v -x -z
+    tar -C /home/github/runner/ --exclude "./externals*" -f /tmp/actions-runner-linux-x64-2.334.0.tar.gz -o -v -x -z && \
+    chown -R -v runner:github /home/github/runner/
 
 FROM scratch AS export-github-runner
 
